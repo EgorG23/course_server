@@ -1,6 +1,7 @@
 package com.hse.course.service;
 
 import com.hse.course.dto.CreateCollectionRequest;
+import com.hse.course.service.MLService;
 import com.hse.course.dto.UpdateCollectionRequest;
 import com.hse.course.model.Gift;
 import com.hse.course.model.GiftCollection;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +27,7 @@ public class CollectionService {
     private RestTemplate restTemplate;
     private UserRepository userRepository;
     private User user;
+    private MLService mlService;
 
     public GiftCollection createCollection(CreateCollectionRequest request, User owner) {
         GiftCollection collection = new GiftCollection();
@@ -78,15 +81,14 @@ public class CollectionService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 2. Получаем интересы пользователя (или используем переданный интерес)
-        Object interests = (interest != null)
+        Set interests = (interest != null)
                 ? Set.of(Integer.parseInt(interest))
-                : user.getInterest();
+                : Collections.singleton(user.getInterest());
 
-        // 3. Получаем рекомендации через ML-сервис
-        List<Long> recommendedGiftIds = mlService.getRecommendations(interests);
+        List recommendedGiftIds = mlService.getRecommendations(interests);
 
         // 4. Получаем полные данные о подарках
-        List<Gift> gifts = giftRepository.findAllById(recommendedGiftIds);
+        List gifts = giftRepository.findAllById(recommendedGiftIds);
 
         return new ApiResponse(gifts, true);
     }
