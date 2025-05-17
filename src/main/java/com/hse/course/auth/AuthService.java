@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private JwtService jwtService;
-    private AuthenticationManager authManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthResponse register(RegisterRequest request) {  // ← Исправлено
+    public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email уже занят");
+            throw new RuntimeException("Email already in use");
         }
 
         var user = User.builder()
@@ -32,11 +32,13 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
 
         return AuthResponse.builder()
                 .token(jwtToken)
-                .message("Регистрация успешна")
+                .refreshToken(refreshToken)
+                .message("Registration successful")
                 .userId(user.getId())
                 .email(user.getEmail())
                 .userName(user.getUserName())
@@ -44,7 +46,7 @@ public class AuthService {
     }
 
     public AuthResponse authenticate(AuthRequest request) {
-        authManager.authenticate(  // ← Исправлено
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
@@ -52,13 +54,37 @@ public class AuthService {
         );
 
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
 
         return AuthResponse.builder()
                 .token(jwtToken)
-                .message("Вход выполнен")
+                .refreshToken(refreshToken)
+                .message("Authentication successful")
+                .userId(user.getId())
+                .email(user.getEmail())
+                .userName(user.getUserName())
+                .build();
+    }
+
+    public AuthResponse refreshToken(String refreshToken) {
+        String email = jwtService.extractUsername(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!jwtService.isTokenValid(refreshToken, user)) {
+            throw new RuntimeException("Invalid refresh token");
+        }
+
+        String newAccessToken = jwtService.generateToken(user);
+        String newRefreshToken = jwtService.generateRefreshToken(user);
+
+        return AuthResponse.builder()
+                .token(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .message("Tokens refreshed")
                 .userId(user.getId())
                 .email(user.getEmail())
                 .userName(user.getUserName())

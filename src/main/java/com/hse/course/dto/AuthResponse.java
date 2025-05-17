@@ -9,8 +9,17 @@ public class AuthResponse {
     private String token;
     private String message;
     private Long userId;
+    private String refreshToken;
     private String email;
     private String userName;
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
     public String getToken() {
         return token;
@@ -60,6 +69,7 @@ public class AuthResponse {
         private String token;
         private String message;
         private Long userId;
+        private String refreshToken;
         private String email;
         private String userName;
 
@@ -88,9 +98,15 @@ public class AuthResponse {
             return this;
         }
 
+        public AuthResponseBuilder refreshToken(String refreshToken){
+            this.refreshToken = refreshToken;
+            return  this;
+        }
+
         public AuthResponse build() {
             AuthResponse response = new AuthResponse();
             response.setToken(this.token);
+            response.setRefreshToken(this.refreshToken);
             response.setMessage(this.message);
             response.setUserId(this.userId);
             response.setEmail(this.email);

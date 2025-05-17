@@ -15,6 +15,7 @@ public class Gift {
     private String category;
     private BigDecimal price;
     private String imageUrl;
+    private Integer popularity;
 
     public Long getId() {
         return id;
@@ -54,5 +55,13 @@ public class Gift {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Integer getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(Integer popularity) {
+        this.popularity = popularity;
     }
 }

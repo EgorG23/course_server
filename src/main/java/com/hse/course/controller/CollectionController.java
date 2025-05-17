@@ -2,6 +2,7 @@ package com.hse.course.controller;
 
 import com.hse.course.dto.CreateCollectionRequest;
 import com.hse.course.dto.UpdateCollectionRequest;
+import com.hse.course.exceptions.ResourceNotFoundException;
 import com.hse.course.model.GiftCollection;
 import com.hse.course.model.User;
 import com.hse.course.service.ApiResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -33,23 +35,25 @@ public class CollectionController {
     }
 
     @PutMapping("/{id}")
-    public GiftCollection updateCollection(
+    public ResponseEntity<GiftCollection> updateCollection(
             @PathVariable Long id,
-            @RequestBody UpdateCollectionRequest request
-    ) {
-        return collectionService.updateCollection(id, request);
+            @RequestBody UpdateCollectionRequest request,
+            @AuthenticationPrincipal User user
+    ) throws AccessDeniedException {
+        return ResponseEntity.ok(collectionService.updateCollection(id, request, user));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCollection(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCollection(@PathVariable Long id) {
         collectionService.deleteCollection(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/collections/recommend/{userId}")
-    public ApiResponse getRecommendedGifts(
+    @GetMapping("/recommend/{userId}")
+    public ResponseEntity<ApiResponse> getRecommendedGifts(
             @PathVariable Long userId,
             @RequestParam(required = false) String interest
     ) {
-        return collectionService.getRecommendedGifts(userId, interest);
+        return ResponseEntity.ok(collectionService.getRecommendedGifts(userId, interest));
     }
 }

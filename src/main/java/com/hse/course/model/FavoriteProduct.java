@@ -1,6 +1,6 @@
 package com.hse.course.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "favorite_items")

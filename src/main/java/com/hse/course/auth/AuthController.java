@@ -1,8 +1,12 @@
 package com.hse.course.auth;
 
+import com.hse.course.config.JwtService;
 import com.hse.course.dto.AuthRequest;
 import com.hse.course.dto.AuthResponse;
 import com.hse.course.dto.RegisterRequest;
+import com.hse.course.model.User;
+import com.hse.course.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private AuthService authService;
+    private final AuthService authService;
+    private JwtService jwtService;
+    private UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
@@ -22,5 +28,35 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Refresh token is missing");
+        }
+        String refreshToken = authHeader.substring(7);
+        return ResponseEntity.ok(authService.refreshToken(refreshToken));
+    }
+
+    // AuthService.java - добавьте метод refreshToken
+    public AuthResponse refreshToken(String refreshToken) {
+        String email = jwtService.extractUsername(refreshToken);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!jwtService.isTokenValid(refreshToken, user)) {
+            throw new RuntimeException("Invalid refresh token");
+        }
+
+        String newAccessToken = jwtService.generateToken(user);
+        return AuthResponse.builder()
+                .token(newAccessToken)
+                .message("Token refreshed")
+                .userId(user.getId())
+                .email(user.getEmail())
+                .userName(user.getUserName())
+                .build();
     }
 }
