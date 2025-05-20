@@ -1,6 +1,6 @@
 package com.hse.course.controller;
 
-import com.hse.course.model.RegisterUserRequest;
+import com.hse.course.dto.RegisterRequest;
 import com.hse.course.model.User;
 import com.hse.course.service.ApiResponse;
 import com.hse.course.service.UserService;
@@ -17,7 +17,7 @@ public class UserController {
     }
 
     @PostMapping("/user/registration/")
-    public ApiResponse register(@RequestBody RegisterUserRequest request) {
+    public ApiResponse register(@RequestBody RegisterRequest request) {
         return userService.registerUser(request);
     }
 
@@ -44,7 +44,7 @@ public class UserController {
     @PostMapping("/user/interests/{userId}")
     public ApiResponse updateInterests(
             @PathVariable Long userId,
-            @RequestBody Set<Integer> interests
+            @RequestBody String interests
     ) {
         return userService.updateInterests(userId, interests);
     }

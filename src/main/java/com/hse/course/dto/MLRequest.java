@@ -1,27 +1,15 @@
 package com.hse.course.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
+@Setter
+@Getter
 @Data
 public class MLRequest {
-    private Set<Integer> interests;
+    private String interests;
     private long timestamp;
-
-    public Set<Integer> getInterests() {
-        return interests;
-    }
-
-    public void setInterests(Set<Integer> interests) {
-        this.interests = interests;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
 }

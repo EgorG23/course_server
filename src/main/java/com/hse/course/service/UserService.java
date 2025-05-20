@@ -1,6 +1,6 @@
 package com.hse.course.service;
 
-import com.hse.course.model.RegisterUserRequest;
+import com.hse.course.dto.RegisterRequest;
 import com.hse.course.model.User;
 import com.hse.course.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class UserService {
     }
 
     @Transactional
-    public ApiResponse registerUser(RegisterUserRequest request) {
+    public ApiResponse registerUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return new ApiResponse("Email already exists", false);
         }
@@ -107,11 +107,11 @@ public class UserService {
         }
     }
     @Transactional
-    public ApiResponse updateInterests(Long userId, Set<Integer> interests) {
+    public ApiResponse updateInterests(Long userId, String interests) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setInterest(interests.toString()); // Или используйте JSON
+        user.setInterest(interests); // Или используйте JSON
         userRepository.save(user);
         return new ApiResponse("Interests updated", true);
     }

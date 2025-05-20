@@ -26,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) throws Exception {
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
@@ -38,25 +38,5 @@ public class AuthController {
         }
         String refreshToken = authHeader.substring(7);
         return ResponseEntity.ok(authService.refreshToken(refreshToken));
-    }
-
-    // AuthService.java - добавьте метод refreshToken
-    public AuthResponse refreshToken(String refreshToken) {
-        String email = jwtService.extractUsername(refreshToken);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!jwtService.isTokenValid(refreshToken, user)) {
-            throw new RuntimeException("Invalid refresh token");
-        }
-
-        String newAccessToken = jwtService.generateToken(user);
-        return AuthResponse.builder()
-                .token(newAccessToken)
-                .message("Token refreshed")
-                .userId(user.getId())
-                .email(user.getEmail())
-                .userName(user.getUserName())
-                .build();
     }
 }

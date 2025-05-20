@@ -26,7 +26,11 @@ public class CollectionController {
             @RequestBody CreateCollectionRequest request,
             @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(collectionService.createCollection(request, user));
+        System.out.println("User from @AuthenticationPrincipal: " + user);
+        if (user == null) {
+            throw new RuntimeException("User is null, authentication failed");
+        }
+        return ResponseEntity.ok(collectionService.createCollection(request.getInterests(), user));
     }
 
     @GetMapping

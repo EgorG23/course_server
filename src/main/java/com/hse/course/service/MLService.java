@@ -18,20 +18,15 @@ public class MLService {
 
     public List<Long> getRecommendations(Set<Integer> interests) {
         try {
-            // 1. Формируем запрос
             Map<String, Object> request = Map.of(
                     "interests", interests,
                     "timestamp", System.currentTimeMillis()
             );
-
-            // 2. Отправляем запрос к ML-сервису
             ResponseEntity<List> response = restTemplate.postForEntity(
                     mlServiceUrl + "/recommend",
                     request,
                     List.class
             );
-
-            // 3. Преобразуем ответ
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 return response.getBody().stream()
                         .filter(Objects::nonNull)

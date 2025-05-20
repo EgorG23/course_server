@@ -1,10 +1,9 @@
 package com.hse.course.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Setter
+@Getter
 public class AuthResponse {
     private String token;
     private String message;
@@ -12,54 +11,6 @@ public class AuthResponse {
     private String refreshToken;
     private String email;
     private String userName;
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public static AuthResponseBuilder builder() {
         return new AuthResponseBuilder();
@@ -115,63 +66,3 @@ public class AuthResponse {
         }
     }
 }
-
-//package com.hse.course.dto;  // или ваш пакет для DTO
-//
-//import lombok.AllArgsConstructor;
-//import lombok.Builder;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//@Data
-//@Builder
-//@AllArgsConstructor
-//@NoArgsConstructor
-//public class AuthResponse {
-//    private String token;          // JWT-токен
-//    private String message;        // Опциональное сообщение (например, "Регистрация успешна")
-//    private Long userId;          // ID пользователя (для удобства клиента)
-//    private String email;         // Электронная почта пользователя
-//    private String userName;      // Имя пользователя
-//
-//    public String getToken() {
-//        return token;
-//    }
-//
-//    public void setToken(String token) {
-//        this.token = token;
-//    }
-//
-//    public String getMessage() {
-//        return message;
-//    }
-//
-//    public void setMessage(String message) {
-//        this.message = message;
-//    }
-//
-//    public Long getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(Long userId) {
-//        this.userId = userId;
-//    }
-//
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getUserName() {
-//        return userName;
-//    }
-//
-//    public void setUserName(String userName) {
-//        this.userName = userName;
-//    }
-//
-//}

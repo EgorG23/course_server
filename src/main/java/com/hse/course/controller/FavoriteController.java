@@ -1,7 +1,8 @@
 package com.hse.course.controller;
 
+import com.hse.course.model.FavoriteGift;
 import com.hse.course.service.ApiResponse;
-import com.hse.course.service.FavoriteProductService;
+import com.hse.course.service.FavoriteGiftService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,14 +11,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/favorites")
 @RequiredArgsConstructor
 public class FavoriteController {
-    private FavoriteProductService favoriteService;
+    private final FavoriteGiftService favoriteService;
 
-    @PostMapping("/{userId}/{productId}")
+    @PostMapping("/{userId}/{giftId}")
     public ApiResponse addFavorite(
             @PathVariable Long userId,
-            @PathVariable Long productId
+            @PathVariable Long giftId
     ) {
-        return favoriteService.addFavorite(userId, productId);
+        return favoriteService.addFavorite(userId, giftId);
+    }
+
+    @DeleteMapping("/{userId}/{giftId}")
+    public ApiResponse removeFavorite(
+            @PathVariable Long userId,
+            @PathVariable Long giftId
+    ) {
+        return favoriteService.removeFromFavorites(userId, giftId);
     }
 
     @GetMapping("/{userId}")

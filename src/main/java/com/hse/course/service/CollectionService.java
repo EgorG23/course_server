@@ -1,6 +1,7 @@
 package com.hse.course.service;
 
 import com.hse.course.dto.CreateCollectionRequest;
+import com.hse.course.dto.MLResponse;
 import com.hse.course.dto.UpdateCollectionRequest;
 import com.hse.course.exceptions.ResourceNotFoundException;
 import com.hse.course.model.Gift;
@@ -8,6 +9,7 @@ import com.hse.course.model.GiftCollection;
 import com.hse.course.model.User;
 import com.hse.course.repository.CollectionRepository;
 import com.hse.course.repository.GiftRepository;
+import com.hse.course.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -32,22 +34,22 @@ public class CollectionService {
     private CollectionRepository collectionRepository;
     private GiftRepository giftRepository;
     private RestTemplate restTemplate;
+    private UserRepository userRepository;
     private static final Logger log = LoggerFactory.getLogger(CollectionService.class);
     @Value("${ml.service.url}")
     private String mlServiceUrl;
 
     @Transactional
-    public GiftCollection createCollection(CreateCollectionRequest request, User owner) {
+    public GiftCollection createCollection(String interestText, User owner) {
+        log.info("Creating collection for user: {}", owner.getEmail());
         GiftCollection collection = new GiftCollection();
-        collection.setName(request.getName());
-        collection.setDescription(request.getDescription());
-        collection.setInterests(request.getInterests());
+        collection.setName("Подборка для друга");
+        collection.setDescription("На основе: " + interestText);
         collection.setOwner(owner);
-
-        List<Long> recommendedGiftIds = getMLRecommendations(request.getInterests());
-        List<Gift> recommendedGifts = giftRepository.findAllById(recommendedGiftIds);
-        collection.setGifts(recommendedGifts);
-
+        log.info("Вызываем getMLRecommendations с интересами: {}", interestText);
+        List<Long> recommendedIds = getMLRecommendations(interestText);
+        log.info("Recommended IDs: {}", recommendedIds);
+        collection.setGifts(giftRepository.findAllById(recommendedIds));
         return collectionRepository.save(collection);
     }
 
@@ -56,37 +58,31 @@ public class CollectionService {
     }
 
     @Transactional
-    public void deleteCollection(Long id) {
-        collectionRepository.deleteById(id);
-    }
-
-    private List<Long> getMLRecommendations(List<String> interests) {
+    private List<Long> getMLRecommendations(String interests) {
         try {
             Map<String, Object> request = Map.of(
-                    "interests", interests,
+                    "text", interests,
                     "timestamp", System.currentTimeMillis()
             );
 
-            ResponseEntity<List> response = restTemplate.postForEntity(
+            ResponseEntity<MLResponse> response = restTemplate.postForEntity(
                     mlServiceUrl + "/recommend",
                     request,
-                    List.class
+                    MLResponse.class
             );
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                return ((List<?>) response.getBody()).stream()
-                        .filter(Objects::nonNull)
-                        .map(id -> Long.parseLong(id.toString()))
-                        .collect(Collectors.toList());
+                return response.getBody().getRecommendations();
             }
+
             return getDefaultRecommendations();
+
         } catch (Exception e) {
             log.error("ML service error", e);
             return getDefaultRecommendations();
         }
     }
 
-    // Реализация метода для GiftRepository
     private List<Long> getDefaultRecommendations() {
         return giftRepository.findTop3ByOrderByPopularityDesc()
                 .stream()
@@ -123,22 +119,16 @@ public class CollectionService {
 
     public ApiResponse getRecommendedGifts(Long userId, String interest) {
         try {
-            List<String> interests = interest != null ?
-                    Collections.singletonList(interest) :
-                    getUserInterests(userId);
-
-            List<Long> recommendedIds = getMLRecommendations(interests);
+            List<Long> recommendedIds = getMLRecommendations(interest);
             List<Gift> gifts = giftRepository.findAllById(recommendedIds);
-
             return new ApiResponse(gifts, true);
         } catch (Exception e) {
             log.error("Failed to get recommendations: ", e);
             return new ApiResponse("Error getting recommendations", false);
         }
     }
-
-    private List<String> getUserInterests(Long userId) {
-        // Реализуйте получение интересов пользователя
-        return Collections.emptyList();
+    @Transactional
+    public void deleteCollection(Long id) {
+        collectionRepository.deleteById(id);
     }
 }

@@ -9,6 +9,8 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.Key;
 import java.util.Date;
@@ -21,6 +23,7 @@ public class JwtService {
     private final String secretKey;
     private final long accessTokenExpiration;
     private final long refreshTokenExpiration;
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     public JwtService(
             @Value("${jwt.secret}") String secretKey,
@@ -30,10 +33,19 @@ public class JwtService {
         this.secretKey = secretKey;
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;
+        log.info("JWT Service initialized");
+        log.info("Secret key length: {}", secretKey.length());
+        try {
+            byte[] decoded = Decoders.BASE64.decode(secretKey);
+            log.info("Base64 decode successful. Key length: {}", decoded.length);
+        } catch (Exception e) {
+            log.error("Failed to decode secret key", e);
+        }
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        System.out.println("JWT Service: Generating token for user: " + userDetails.getUsername());
+        return buildToken(new HashMap<>(), userDetails, accessTokenExpiration);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -49,13 +61,31 @@ public class JwtService {
             UserDetails userDetails,
             long expiration
     ) {
-        return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+        try {
+            if (userDetails == null || userDetails.getUsername() == null) {
+                log.error("UserDetails или username равен null");
+                throw new IllegalArgumentException("UserDetails или username равен null");
+            }
+
+            log.info("Building token for user: {}", userDetails.getUsername());
+            log.debug("Extra claims: {}", extraClaims);
+            log.debug("Token expiration: {} ms", expiration);
+
+            Key signingKey = getSignInKey();
+            log.debug("Signing key generated");
+
+            return Jwts.builder()
+                    .setClaims(extraClaims)
+                    .setSubject(userDetails.getUsername())
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                    .signWith(signingKey, SignatureAlgorithm.HS256)
+                    .compact();
+
+        } catch (Exception e) {
+            log.error("Ошибка при построении токена", e);
+            throw e;
+        }
     }
 
     public String extractEmail(String token) {
@@ -103,7 +133,9 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
+        log.debug("Decoding secret key...");
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        log.debug("Secret key decoded successfully. Length: {}", keyBytes.length);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

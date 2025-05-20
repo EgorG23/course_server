@@ -1,8 +1,11 @@
 package com.hse.course.service;
 
+import lombok.Getter;
+
+@Getter
 public class ApiResponse {
     private Object data;
-    private Boolean success;
+    private final Boolean success;
     private String message;
 
     public ApiResponse(Object data, Boolean success) {
@@ -15,7 +18,4 @@ public class ApiResponse {
         this.success = success;
     }
 
-    public Object getData() { return data; }
-    public Boolean getSuccess() { return success; }
-    public String getMessage() { return message; }
 }

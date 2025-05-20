@@ -1,5 +1,8 @@
 package com.hse.course.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Interest {
     GAME(1, "Игры"),
     VOLLEYBALL(2,"Волейбол"),
@@ -14,11 +17,4 @@ public enum Interest {
         this.translation = translation;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public String getTranslation() {
-        return translation;
-    }
 }
