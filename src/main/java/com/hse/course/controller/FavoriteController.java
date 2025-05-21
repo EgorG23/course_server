@@ -6,7 +6,6 @@ import com.hse.course.service.FavoriteGiftService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-// FavoriteController.java - новый контроллер
 @RestController
 @RequestMapping("/api/favorites")
 @RequiredArgsConstructor
