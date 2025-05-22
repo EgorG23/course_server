@@ -24,6 +24,4 @@ public class Advertisement {
     private String description;
     private Float rate;
     private Integer quantityReviews;
-
-
 }

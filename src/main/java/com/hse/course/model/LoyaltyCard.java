@@ -9,6 +9,7 @@ import lombok.Data;
 public class LoyaltyCard {
     @Id
     private Long globalId;
+    private Long userId;
     @Enumerated(EnumType.STRING)
     private LoyaltyLevel loyaltyLevel;
 
@@ -26,5 +27,13 @@ public class LoyaltyCard {
 
     public void setLoyaltyLevel(LoyaltyLevel loyaltyLevel) {
         this.loyaltyLevel = loyaltyLevel;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

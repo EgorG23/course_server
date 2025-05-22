@@ -22,6 +22,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String userName;
+    @Email
     private String email;
     private String password;
     private String interest;
@@ -69,7 +70,6 @@ public class User implements UserDetails {
         private String surname;
         private String phoneNumber;
         private Long dateOfBirth;
-        private Long globalId;
 
         public UserBuilder email(String email) {
             this.email = email;
@@ -101,14 +101,9 @@ public class User implements UserDetails {
             return this;
         }
 
-        public UserBuilder id(Long id) {
-            this.id = id;
-            return this;
-        }
 
         public User build() {
             User user = new User();
-            user.setId(id != null ? id : System.currentTimeMillis());
             user.setEmail(email);
             user.setPassword(password);
             user.setUserName(userName);

@@ -5,6 +5,7 @@ import com.hse.course.model.LoyaltyCard;
 import com.hse.course.model.LoyaltyLevel;
 import com.hse.course.model.User;
 import com.hse.course.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,18 +27,21 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
-    public ApiResponse registerUser(RegisterRequest request) {
+    public User registerUser(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            return new ApiResponse("Email already exists", false);
+            throw new RuntimeException("Email already exists");
         }
 
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setUserName(request.getUserName());
-        User savedUser = userRepository.save(user);
-        return new ApiResponse(savedUser, true);
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .userName(request.getUserName())
+                .surname(request.getSurname())
+                .phoneNumber(request.getPhoneNumber())
+                .dateOfBirth(request.getDob())
+                .build();
+
+        return userRepository.save(user);
     }
 
     public ApiResponse getUserByEmail(String email) {

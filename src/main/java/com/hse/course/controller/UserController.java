@@ -1,17 +1,10 @@
 package com.hse.course.controller;
 
 import com.hse.course.dto.RegisterRequest;
-import com.hse.course.model.LoyaltyCard;
-import com.hse.course.model.LoyaltyLevel;
 import com.hse.course.model.User;
-import com.hse.course.repository.UserRepository;
 import com.hse.course.service.ApiResponse;
 import com.hse.course.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
-import java.util.Set;
 
 @RestController
 public class UserController {
@@ -22,7 +15,7 @@ public class UserController {
     }
 
     @PostMapping("/user/registration/")
-    public ApiResponse register(@RequestBody RegisterRequest request) {
+    public User register(@RequestBody RegisterRequest request) {
         return userService.registerUser(request);
     }
 

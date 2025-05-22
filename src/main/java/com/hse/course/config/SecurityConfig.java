@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableJpaRepositories(basePackages = "com.hse.course.repository")
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -52,12 +53,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(UserRepository repository) {
-        return email -> repository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User is not found"));
     }
 
 }

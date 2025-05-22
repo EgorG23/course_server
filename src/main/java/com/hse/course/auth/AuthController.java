@@ -20,12 +20,12 @@ public class AuthController {
     private JwtService jwtService;
     private UserRepository userRepository;
 
-    @PostMapping("/register")
+    @PostMapping("/user/registration")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) throws Exception {
         return ResponseEntity.ok(authService.authenticate(request));
     }

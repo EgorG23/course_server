@@ -125,6 +125,15 @@ public class CollectionService {
             return new ApiResponse("Error getting recommendations", false);
         }
     }
+
+    public List<GiftCollection> getRandomCollections(int count) {
+        List<GiftCollection> allCollections = collectionRepository.findAll();
+        Collections.shuffle(allCollections, new Random());
+        return allCollections.stream()
+                .limit(count)
+                .toList();
+    }
+
     @Transactional
     public void deleteCollection(Long id) {
         collectionRepository.deleteById(id);

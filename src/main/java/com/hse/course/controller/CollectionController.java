@@ -40,6 +40,8 @@ public class CollectionController {
         return ResponseEntity.ok(collectionService.createCollection(request.getInterests(), user));
     }
 
+
+
     @GetMapping
     public List<GiftCollection> getUserCollections(@AuthenticationPrincipal User user) {
         return collectionService.getUserCollections(user.getId());
@@ -60,11 +62,20 @@ public class CollectionController {
         return ResponseEntity.noContent().build();
     }
 
+
+
+
+    // УДАЛИТЬ
     @GetMapping("/recommend/{userId}")
     public ResponseEntity<ApiResponse> getRecommendedGifts(
             @PathVariable Long userId,
             @RequestParam(required = false) String interest
     ) {
         return ResponseEntity.ok(collectionService.getRecommendedGifts(userId, interest));
+    }
+
+    public ResponseEntity<List<GiftCollection>> getRandomCollections() {
+        List<GiftCollection> randomCollections = collectionService.getRandomCollections(5);
+        return ResponseEntity.ok(randomCollections);
     }
 }
