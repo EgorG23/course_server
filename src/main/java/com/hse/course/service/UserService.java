@@ -1,6 +1,8 @@
 package com.hse.course.service;
 
 import com.hse.course.dto.RegisterRequest;
+import com.hse.course.model.LoyaltyCard;
+import com.hse.course.model.LoyaltyLevel;
 import com.hse.course.model.User;
 import com.hse.course.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,6 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setUserName(request.getUserName());
-
         User savedUser = userRepository.save(user);
         return new ApiResponse(savedUser, true);
     }
@@ -65,53 +66,53 @@ public class UserService {
         return new ApiResponse(updatedUser, true);
     }
 
-    @Transactional
-    public ApiResponse uploadAvatar(String id, byte[] avatarData) {
-        try {
-            Long userId = Long.parseLong(id);
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            Path uploadDir = Paths.get("uploads");
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-            }
-
-            String fileName = "avatar_" + userId + ".jpg";
-            Path filePath = uploadDir.resolve(fileName);
-            Files.write(filePath, avatarData);
-
-            user.setAvatarPath(fileName);
-            userRepository.save(user);
-
-            return new ApiResponse("Avatar uploaded", true);
-        } catch (Exception e) {
-            return new ApiResponse("Upload failed: " + e.getMessage(), false);
-        }
-    }
-
-    public ResponseEntity<byte[]> getAvatar(String id) {
-        try {
-            Long userId = Long.parseLong(id);
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            Path filePath = Paths.get("uploads/" + user.getAvatarPath());
-            byte[] imageBytes = Files.readAllBytes(filePath);
-
-            return ResponseEntity.ok()
-                    .header("Content-Type", "image/jpeg")
-                    .body(imageBytes);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @Transactional
+//    public ApiResponse uploadAvatar(String id, byte[] avatarData) {
+//        try {
+//            Long userId = Long.parseLong(id);
+//            User user = userRepository.findById(userId)
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//            Path uploadDir = Paths.get("uploads");
+//            if (!Files.exists(uploadDir)) {
+//                Files.createDirectories(uploadDir);
+//            }
+//
+//            String fileName = "avatar_" + userId + ".jpg";
+//            Path filePath = uploadDir.resolve(fileName);
+//            Files.write(filePath, avatarData);
+//
+//            user.setAvatarPath(fileName);
+//            userRepository.save(user);
+//
+//            return new ApiResponse("Avatar uploaded", true);
+//        } catch (Exception e) {
+//            return new ApiResponse("Upload failed: " + e.getMessage(), false);
+//        }
+//    }
+//
+//    public ResponseEntity<byte[]> getAvatar(String id) {
+//        try {
+//            Long userId = Long.parseLong(id);
+//            User user = userRepository.findById(userId)
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//            Path filePath = Paths.get("uploads/" + user.getAvatarPath());
+//            byte[] imageBytes = Files.readAllBytes(filePath);
+//
+//            return ResponseEntity.ok()
+//                    .header("Content-Type", "image/jpeg")
+//                    .body(imageBytes);
+//        } catch (Exception e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
     @Transactional
     public ApiResponse updateInterests(Long userId, String interests) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setInterest(interests); // Или используйте JSON
+        user.setInterest(interests);
         userRepository.save(user);
         return new ApiResponse("Interests updated", true);
     }
@@ -120,6 +121,22 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new ApiResponse(user.getInterest(), true); // Возвращаем Set<Integer>
+        return new ApiResponse(user.getInterest(), true);
+    }
+
+    public ApiResponse getLoyaltyCard(String userGlobalId) {
+        try {
+            Long userId = Long.parseLong(userGlobalId);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            LoyaltyCard card = new LoyaltyCard();
+            card.setGlobalId(user.getId());
+            card.setLoyaltyLevel(LoyaltyLevel.STANDARD); // Пока тут будет заглушка, потом поменять!!!!!!!!!!!
+
+            return new ApiResponse(card, true);
+        } catch (Exception e) {
+            return new ApiResponse("Error fetching loyalty card", false);
+        }
     }
 }

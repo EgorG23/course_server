@@ -1,11 +1,16 @@
 package com.hse.course.controller;
 
 import com.hse.course.dto.RegisterRequest;
+import com.hse.course.model.LoyaltyCard;
+import com.hse.course.model.LoyaltyLevel;
 import com.hse.course.model.User;
+import com.hse.course.repository.UserRepository;
 import com.hse.course.service.ApiResponse;
 import com.hse.course.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -49,13 +54,19 @@ public class UserController {
         return userService.updateInterests(userId, interests);
     }
 
-    @PostMapping("/user/avatar/upload/{id}")
-    public ApiResponse uploadAvatar(@PathVariable String id, @RequestBody byte[] avatarData) {
-        return userService.uploadAvatar(id, avatarData);
+    @GetMapping("user/get/loyalty/{userGlobalId}") // Для получения card
+    public ApiResponse getLoyaltyCard(@PathVariable String userGlobalId) {
+        return userService.getLoyaltyCard(userGlobalId);
     }
 
-    @GetMapping("/user/avatar/{id}")
-    public ResponseEntity<byte[]> getAvatar(@PathVariable String id) {
-        return userService.getAvatar(id);
-    }
+
+//    @PostMapping("/user/avatar/upload/{id}")
+//    public ApiResponse uploadAvatar(@PathVariable String id, @RequestBody byte[] avatarData) {
+//        return userService.uploadAvatar(id, avatarData);
+//    }
+//
+//    @GetMapping("/user/avatar/{id}")
+//    public ResponseEntity<byte[]> getAvatar(@PathVariable String id) {
+//        return userService.getAvatar(id);
+//    }
 }

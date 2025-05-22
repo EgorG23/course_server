@@ -16,6 +16,9 @@ public class RegisterRequest {
     private String password;
     @NotBlank(message = "Имя пользователя обязательно")
     private String userName;
+    private String surname;
+    private String phoneNumber;
+    private Long dob;
 
 
     public @NotBlank(message = "Email обязателен") @Email(message = "Некорректный email") String getEmail() {
@@ -40,5 +43,29 @@ public class RegisterRequest {
 
     public void setUserName(@NotBlank(message = "Имя пользователя обязательно") String userName) {
         this.userName = userName;
+    }
+
+    public @NotBlank(message = "Фамилия пользователя обязательна") String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(@NotBlank(message = "Фамилия пользователя обязательна") String surname) {
+        this.surname = surname;
+    }
+
+    public @NotBlank(message = "Фамилия пользователя обязательна") String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(@NotBlank(message = "Номер пользователя обязателен") String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public @NotBlank(message = "ДД пользователя обязательна") Long getDob() {
+        return dob;
+    }
+
+    public void setDob(@NotBlank(message = "ДД пользователя обязательна") Long dob) {
+        this.dob = dob;
     }
 }

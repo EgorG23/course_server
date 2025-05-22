@@ -10,7 +10,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @Service
-public class FileStorageService {
+public class FileStorageService { // Мы решили пока что отказаться от использования аватаров профиля, поэтому сервис
+    // никак не используется, но оставлен для будущего улучшения продукта
 
     private final Path fileStorageLocation;
 

@@ -25,18 +25,51 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String interest;
-    private String link;
-    private String avatarPath;
-
+    private String surname;
+    private String phoneNumber;
+    private Long dateOfBirth;
 
     public static UserBuilder builder() {
         return new UserBuilder();
     }
 
+//    public static class UserBuilder {
+//        private String email;
+//        private String password;
+//        private String userName;
+//
+//        public UserBuilder email(String email) {
+//            this.email = email;
+//            return this;
+//        }
+//
+//        public UserBuilder password(String password) {
+//            this.password = password;
+//            return this;
+//        }
+//
+//        public UserBuilder userName(String userName) {
+//            this.userName = userName;
+//            return this;
+//        }
+//
+////        public User build() {
+////            User user = new User();
+////            user.setEmail(this.email);
+////            user.setPassword(this.password);
+////            user.setUserName(this.userName);
+////            return user;
+////        }
+//    }
+
     public static class UserBuilder {
         private String email;
         private String password;
         private String userName;
+        private String surname;
+        private String phoneNumber;
+        private Long dateOfBirth;
+        private Long globalId;
 
         public UserBuilder email(String email) {
             this.email = email;
@@ -48,16 +81,40 @@ public class User implements UserDetails {
             return this;
         }
 
-        public UserBuilder userName(String userName) {
+        public UserBuilder name(String userName) {
             this.userName = userName;
+            return this;
+        }
+
+        public UserBuilder surname(String surname) {
+            this.surname = surname;
+            return this;
+        }
+
+        public UserBuilder phoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public UserBuilder dateOfBirth(Long dateOfBirth) {
+            this.dateOfBirth = dateOfBirth;
+            return this;
+        }
+
+        public UserBuilder id(Long id) {
+            this.id = id;
             return this;
         }
 
         public User build() {
             User user = new User();
-            user.setEmail(this.email);
-            user.setPassword(this.password);
-            user.setUserName(this.userName);
+            user.setId(id != null ? id : System.currentTimeMillis());
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setUserName(userName);
+            user.setSurname(surname);
+            user.setPhoneNumber(phoneNumber);
+            user.setDateOfBirth(dateOfBirth);
             return user;
         }
     }
@@ -134,20 +191,27 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getLink() {
-        return link;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
-    public String getAvatarPath() {
-        return avatarPath;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
+    public Long getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Long dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
 }

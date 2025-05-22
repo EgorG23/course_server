@@ -21,5 +21,4 @@ public class Gift {
     private BigDecimal price;
     private String imageUrl;
     private Integer popularity;
-
 }

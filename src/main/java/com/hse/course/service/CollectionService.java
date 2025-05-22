@@ -22,19 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.file.AccessDeniedException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CollectionService {
-    private CollectionRepository collectionRepository;
-    private GiftRepository giftRepository;
-    private RestTemplate restTemplate;
-    private UserRepository userRepository;
+    private final CollectionRepository collectionRepository;
+    private final GiftRepository giftRepository;
+    private final RestTemplate restTemplate;
+    private final UserRepository userRepository;
     private static final Logger log = LoggerFactory.getLogger(CollectionService.class);
     @Value("${ml.service.url}")
     private String mlServiceUrl;
@@ -60,8 +57,9 @@ public class CollectionService {
     @Transactional
     private List<Long> getMLRecommendations(String interests) {
         try {
+            List<String> interestList = List.of(interests.split(","));
             Map<String, Object> request = Map.of(
-                    "text", interests,
+                    "interests", interestList,
                     "timestamp", System.currentTimeMillis()
             );
 
