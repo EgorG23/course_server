@@ -39,7 +39,7 @@ public class FavoriteGiftService {
     @Transactional
     public ApiResponse removeFromFavorites(Long userId, Long productId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User is not found"));
 
         favoriteRepository.deleteByUserAndGiftId(user, productId);
         return new ApiResponse("Removed from favorites", true);
@@ -74,7 +74,7 @@ public class FavoriteGiftService {
 
     public ApiResponse getFavorites(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User isnot found"));
 
         List<Gift> favorites = favoriteRepository.findByUser(user).stream()
                 .map(FavoriteGift::getGift)
