@@ -20,7 +20,7 @@ public class FavoriteGiftService {
 
     @Transactional
     public ApiResponse addToFavorites(Long userId, Long giftId) {
-        User user = userRepository.findById(userId)  // Добавляем получение пользователя
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User is not found"));
 
         if (favoriteRepository.existsByUserAndGiftId(user, giftId)) {
@@ -29,7 +29,7 @@ public class FavoriteGiftService {
 
         FavoriteGift favorite = new FavoriteGift();
         favorite.setUser(user);
-        favorite.setGift(giftRepository.findById(giftId)  // Получаем продукт
+        favorite.setGift(giftRepository.findById(giftId)
                 .orElseThrow(() -> new RuntimeException("Gift is not found")));
 
         favoriteRepository.save(favorite);

@@ -10,7 +10,6 @@ public interface GiftRepository extends JpaRepository<Gift, Long> {
     @Query("SELECT g FROM Gift g ORDER BY g.popularity DESC LIMIT 3")
     List<Gift> findTop3ByOrderByPopularityDesc();
     List<Gift> findByNameContaining(String name);
-
     List<Gift> findByCategory(String category);
 
     List<Gift> findByPriceBetween(Double minPrice, Double maxPrice);

@@ -2,35 +2,37 @@ package com.hse.course.controller;
 
 import com.hse.course.model.Gift;
 import com.hse.course.repository.GiftRepository;
+import com.hse.course.service.GiftService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/gifts")
+@RequestMapping("/advertisement")
 @RequiredArgsConstructor
 public class GiftController {
 
     private final GiftRepository giftRepository;
+    private final GiftService giftService;
 
-    @GetMapping
-    public List<Gift> getAllGifts() {
-        return giftRepository.findAll();
+
+    @GetMapping("/list/get")
+    public ResponseEntity<List<Gift>> getAllGifts() {
+        List<Gift> gifts = giftRepository.findAll();
+        return ResponseEntity.ok(gifts);
     }
 
-    @GetMapping("/{id}")
-    public Gift getGiftById(@PathVariable Long id) {
-        return giftRepository.findById(id)
+    @GetMapping("/list/get/query/{query}")
+    public ResponseEntity<List<Gift>> getGiftsByQuery(@PathVariable String query) {
+        List<Gift> gifts = giftRepository.findByNameContaining(query);
+        return ResponseEntity.ok(gifts);
+    }
+
+    @GetMapping("/get/{advertisementGlobalId}")
+    public ResponseEntity<Gift> getGiftById(@PathVariable Long advertisementGlobalId) {
+        Gift gift = giftRepository.findById(advertisementGlobalId)
                 .orElseThrow(() -> new IllegalArgumentException("Gift not found"));
-    }
-
-    @GetMapping("/search")
-    public List<Gift> searchGifts(@RequestParam String name) {
-        return giftRepository.findByNameContaining(name);
-    }
-
-    @GetMapping("/category/{category}")
-    public List<Gift> getGiftsByCategory(@PathVariable String category) {
-        return giftRepository.findByCategory(category);
+        return ResponseEntity.ok(gift);
     }
 }

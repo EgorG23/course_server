@@ -15,6 +15,10 @@ public class Order {
     private Long idAdvertisement;
     private Integer amount;
 
+
+
+
+
     public Long getGlobalId() {
         return globalId;
     }

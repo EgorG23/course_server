@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.List;
 
+
 @Setter
 @Getter
 @Entity
@@ -17,20 +18,21 @@ public class GiftCollection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "global_id", unique = true, nullable = false)
+    private Long globalId;
     private String name;
     private String description;
-    private String interests;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
 
-    @ManyToMany
-    @JoinTable(
-            name = "collection_gifts",
-            joinColumns = @JoinColumn(name = "collection_id"),
-            inverseJoinColumns = @JoinColumn(name = "gift_id")
-    )
-    private List<Gift> gifts;
+    private List<Long> gifts;
 
+    @PrePersist
+    public void generateGlobalId() {
+        if (this.globalId == null) {
+            this.globalId = System.currentTimeMillis();
+        }
+    }
 }

@@ -1,10 +1,10 @@
 package com.hse.course.controller;
 
-import com.hse.course.dto.CreateCollectionRequest;
-import com.hse.course.dto.UpdateCollectionRequest;
+import com.hse.course.dto.CollectionRequest;
 import com.hse.course.exceptions.ResourceNotFoundException;
 import com.hse.course.model.GiftCollection;
 import com.hse.course.model.User;
+import com.hse.course.repository.CollectionRepository;
 import com.hse.course.repository.UserRepository;
 import com.hse.course.service.ApiResponse;
 import com.hse.course.service.CollectionService;
@@ -13,48 +13,49 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/collections")
+@RequestMapping("/selection")
 @RequiredArgsConstructor
 public class CollectionController {
     private final CollectionService collectionService;
     private final UserRepository userRepository;
-
-    @PostMapping
+    private final CollectionRepository collectionRepository;
+    @PostMapping("/add/")
     public ResponseEntity<GiftCollection> createCollection(
-            @RequestBody CreateCollectionRequest request,
+            @RequestBody CollectionRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        //System.out.println("User from @AuthenticationPrincipal: " + user);
         if (userDetails == null) {
-            throw new RuntimeException("User is null, authentication failed");
+            throw new RuntimeException("User is null, authentication was failed");
         }
 
         User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User is not found"));
 
-        return ResponseEntity.ok(collectionService.createCollection(request.getInterests(), user));
+        return ResponseEntity.ok(collectionService.createCollection(request.getDescription(), request.getName(), user));
     }
 
-
-
-    @GetMapping
-    public List<GiftCollection> getUserCollections(@AuthenticationPrincipal User user) {
-        return collectionService.getUserCollections(user.getId());
+    @GetMapping("/get/{userGlobalId}")
+    public ResponseEntity<ApiResponse> getUserCollections(@PathVariable String userGlobalId) {
+        try {
+            Long userId = Long.valueOf(userGlobalId);
+            List<GiftCollection> responses = collectionService.getUserCollections(userId);
+            return ResponseEntity.ok(new ApiResponse(responses, true));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(new ApiResponse("Invalid user ID format", false));
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<GiftCollection> updateCollection(
-            @PathVariable Long id,
-            @RequestBody UpdateCollectionRequest request,
-            @AuthenticationPrincipal User user
-    ) throws AccessDeniedException {
-        return ResponseEntity.ok(collectionService.updateCollection(id, request, user));
-    }
+//    @PutMapping("/{id}") не будем реализовывать
+//    public ResponseEntity<GiftCollection> updateCollection(
+//            @PathVariable Long id,
+//            @RequestBody UpdateCollectionRequest request,
+//            @AuthenticationPrincipal User user
+//    ) throws AccessDeniedException {
+//        return ResponseEntity.ok(collectionService.updateCollection(id, request, user));
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCollection(@PathVariable Long id) {
@@ -62,11 +63,7 @@ public class CollectionController {
         return ResponseEntity.noContent().build();
     }
 
-
-
-
-    // УДАЛИТЬ
-    @GetMapping("/recommend/{userId}")
+    @GetMapping("/recommend/{userId}") //Для проверки получения рекомендаций
     public ResponseEntity<ApiResponse> getRecommendedGifts(
             @PathVariable Long userId,
             @RequestParam(required = false) String interest

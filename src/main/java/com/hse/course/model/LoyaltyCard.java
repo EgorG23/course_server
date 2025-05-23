@@ -1,10 +1,16 @@
 package com.hse.course.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "loyalty_cards")
 public class LoyaltyCard {
     @Id
@@ -35,5 +41,12 @@ public class LoyaltyCard {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    @PrePersist
+    public void generateGlobalId() {
+        if (this.globalId == null) {
+            this.globalId = System.currentTimeMillis();
+        }
     }
 }

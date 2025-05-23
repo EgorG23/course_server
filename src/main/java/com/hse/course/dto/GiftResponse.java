@@ -1,21 +1,26 @@
 package com.hse.course.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Data
-public class AdvertisementResponse {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class GiftResponse {
     private Long id;
+    private String name;
+    private String category;
     private Integer price;
     private Boolean isFavorite;
     private Float sellerDiscount;
     private List<String> url;
     private String brand;
-    private String name;
     private String description;
-    private Float rate;
+    private Float popularity;
     private Integer quantityReviews;
-
-    public AdvertisementResponse(Long id, Integer price, Boolean isFavorite, Float sellerDiscount, List<String> url, String brand, String name, String description, Float rate, Integer quantityReviews) {
-    }
 }

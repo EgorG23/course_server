@@ -1,9 +1,6 @@
 package com.hse.course.service;
 
-import com.hse.course.dto.CreateCollectionRequest;
 import com.hse.course.dto.MLResponse;
-import com.hse.course.dto.UpdateCollectionRequest;
-import com.hse.course.exceptions.ResourceNotFoundException;
 import com.hse.course.model.Gift;
 import com.hse.course.model.GiftCollection;
 import com.hse.course.model.User;
@@ -11,7 +8,6 @@ import com.hse.course.repository.CollectionRepository;
 import com.hse.course.repository.GiftRepository;
 import com.hse.course.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,16 +32,16 @@ public class CollectionService {
     private String mlServiceUrl;
 
     @Transactional
-    public GiftCollection createCollection(String interestText, User owner) {
+    public GiftCollection createCollection(String interestText, String title, User owner) {
         log.info("Creating collection for user: {}", owner.getEmail());
         GiftCollection collection = new GiftCollection();
-        collection.setName("Подборка для друга");
+        collection.setName(title);
         collection.setDescription("На основе: " + interestText);
         collection.setOwner(owner);
         log.info("Вызываем getMLRecommendations с интересами: {}", interestText);
         List<Long> recommendedIds = getMLRecommendations(interestText);
         log.info("Recommended IDs: {}", recommendedIds);
-        collection.setGifts(giftRepository.findAllById(recommendedIds));
+        collection.setGifts(recommendedIds);
         return collectionRepository.save(collection);
     }
 
@@ -88,38 +83,10 @@ public class CollectionService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public GiftCollection updateCollection(Long id, UpdateCollectionRequest request, User user)
-            throws AccessDeniedException {
-        GiftCollection collection = collectionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
-
-        if (!collection.getOwner().getId().equals(user.getId())) {
-            throw new AccessDeniedException("You are not the owner of this collection");
-        }
-
-        if (request.getName() != null) {
-            collection.setName(request.getName());
-        }
-
-        if (request.getDescription() != null) {
-            collection.setDescription(request.getDescription());
-        }
-
-        if (request.getInterests() != null) {
-            collection.setInterests(request.getInterests());
-            List<Long> newRecommendations = getMLRecommendations(request.getInterests());
-            collection.setGifts(giftRepository.findAllById(newRecommendations));
-        }
-
-        return collectionRepository.save(collection);
-    }
-
     public ApiResponse getRecommendedGifts(Long userId, String interest) {
         try {
             List<Long> recommendedIds = getMLRecommendations(interest);
-            List<Gift> gifts = giftRepository.findAllById(recommendedIds);
-            return new ApiResponse(gifts, true);
+            return new ApiResponse(recommendedIds, true);
         } catch (Exception e) {
             log.error("Failed to get recommendations: ", e);
             return new ApiResponse("Error getting recommendations", false);

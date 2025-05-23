@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Setter
 @Getter
@@ -18,7 +19,12 @@ public class Gift {
     private Long id;
     private String name;
     private String category;
-    private BigDecimal price;
-    private String imageUrl;
-    private Integer popularity;
+    private Integer price;
+    private Float popularity;
+    private Boolean isFavorite;
+    private Float sellerDiscount;
+    private List<String> url;
+    private String brand;
+    private String description;
+    private Integer quantityReviews;
 }

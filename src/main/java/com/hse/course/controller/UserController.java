@@ -14,11 +14,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user/registration/")
-    public User register(@RequestBody RegisterRequest request) {
-        return userService.registerUser(request);
-    }
-
     @GetMapping("/user/get/email/{email}")
     public ApiResponse getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
@@ -51,15 +46,4 @@ public class UserController {
     public ApiResponse getLoyaltyCard(@PathVariable String userGlobalId) {
         return userService.getLoyaltyCard(userGlobalId);
     }
-
-
-//    @PostMapping("/user/avatar/upload/{id}")
-//    public ApiResponse uploadAvatar(@PathVariable String id, @RequestBody byte[] avatarData) {
-//        return userService.uploadAvatar(id, avatarData);
-//    }
-//
-//    @GetMapping("/user/avatar/{id}")
-//    public ResponseEntity<byte[]> getAvatar(@PathVariable String id) {
-//        return userService.getAvatar(id);
-//    }
 }

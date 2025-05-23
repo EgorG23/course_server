@@ -7,4 +7,7 @@ import lombok.Data;
 @Builder
 public class OrderResponse {
     private Long globalId;
+    private Long userId;
+    private Long idAdvertisement;
+    private Integer amount;
 }

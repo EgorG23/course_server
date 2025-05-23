@@ -6,11 +6,15 @@ import lombok.*;
 @Getter
 public class AuthResponse {
     private String token;
-    private String message;
-    private Long userId;
     private String refreshToken;
+    private String message;
+    private Long globalId;
     private String email;
-    private String userName;
+    private String password;
+    private String name;
+    private String surname;
+    private String phoneNumber;
+    private Long dob;
 
     public static AuthResponseBuilder builder() {
         return new AuthResponseBuilder();
@@ -18,11 +22,15 @@ public class AuthResponse {
 
     public static class AuthResponseBuilder {
         private String token;
-        private String message;
-        private Long userId;
         private String refreshToken;
+        private String message;
+        private Long globalId;
         private String email;
-        private String userName;
+        private String password;
+        private String name;
+        private String surname;
+        private String phoneNumber;
+        private Long dob;
 
         public AuthResponseBuilder token(String token) {
             this.token = token;
@@ -34,8 +42,13 @@ public class AuthResponse {
             return this;
         }
 
-        public AuthResponseBuilder userId(Long userId) {
-            this.userId = userId;
+        public AuthResponseBuilder refreshToken(String refreshToken){
+            this.refreshToken = refreshToken;
+            return  this;
+        }
+
+        public AuthResponseBuilder globalId(Long globalId) {
+            this.globalId = globalId;
             return this;
         }
 
@@ -44,24 +57,45 @@ public class AuthResponse {
             return this;
         }
 
-        public AuthResponseBuilder userName(String userName) {
-            this.userName = userName;
+        public AuthResponseBuilder password(String password){
+            this.password = password;
             return this;
         }
 
-        public AuthResponseBuilder refreshToken(String refreshToken){
-            this.refreshToken = refreshToken;
-            return  this;
+        public AuthResponseBuilder name(String name) {
+            this.name = name;
+            return this;
         }
+
+        public AuthResponseBuilder surname(String surname){
+            this.surname = surname;
+            return this;
+        }
+
+        public AuthResponseBuilder phoneNumber(String phoneNumber){
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public AuthResponseBuilder dob(Long dob){
+            this.dob = dob;
+            return this;
+        }
+
+
 
         public AuthResponse build() {
             AuthResponse response = new AuthResponse();
             response.setToken(this.token);
             response.setRefreshToken(this.refreshToken);
             response.setMessage(this.message);
-            response.setUserId(this.userId);
+            response.setGlobalId(this.globalId);
             response.setEmail(this.email);
-            response.setUserName(this.userName);
+            response.setPassword(this.password);
+            response.setName(this.name);
+            response.setSurname(this.surname);
+            response.setPhoneNumber(this.phoneNumber);
+            response.setDob(this.dob);
             return response;
         }
     }

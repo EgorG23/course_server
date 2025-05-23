@@ -1,7 +1,10 @@
 package com.hse.course.auth;
 
 import com.hse.course.config.JwtService;
+import com.hse.course.model.LoyaltyCard;
+import com.hse.course.model.LoyaltyLevel;
 import com.hse.course.model.User;
+import com.hse.course.repository.LoyaltyCardRepository;
 import com.hse.course.repository.UserRepository;
 import com.hse.course.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final LoyaltyCardRepository loyaltyCardRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public AuthResponse register(RegisterRequest request) {
@@ -46,6 +50,13 @@ public class AuthService {
 
         userRepository.save(user);
 
+        LoyaltyCard loyaltyCard = LoyaltyCard.builder()
+                .userId(user.getId())
+                .loyaltyLevel(LoyaltyLevel.valueOf(LoyaltyLevel.STANDARD.name()))
+                .build();
+
+        loyaltyCardRepository.save(loyaltyCard);
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
 
@@ -53,9 +64,13 @@ public class AuthService {
                 .token(jwtToken)
                 .refreshToken(refreshToken)
                 .message("Registration successful")
-                .userId(user.getId())
+                .globalId(user.getId())
                 .email(user.getEmail())
-                .userName(user.getUserName())
+                .password(user.getPassword())
+                .name(user.getUserName())
+                .surname(user.getSurname())
+                .phoneNumber(user.getPhoneNumber())
+                .dob(user.getDateOfBirth())
                 .build();
     }
 
@@ -73,9 +88,13 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(jwtService.generateToken(user))
                 .refreshToken(jwtService.generateRefreshToken(user))
-                .userId(user.getId())
+                .globalId(user.getId())
                 .email(user.getEmail())
-                .userName(user.getUserName())
+                .password(user.getPassword())
+                .name(user.getUserName())
+                .surname(user.getSurname())
+                .phoneNumber(user.getPhoneNumber())
+                .dob(user.getDateOfBirth())
                 .build();
     }
 
@@ -95,9 +114,13 @@ public class AuthService {
                 .token(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .message("Tokens refreshed")
-                .userId(user.getId())
+                .globalId(user.getId())
                 .email(user.getEmail())
-                .userName(user.getUserName())
+                .password(user.getPassword())
+                .name(user.getUserName())
+                .surname(user.getSurname())
+                .phoneNumber(user.getPhoneNumber())
+                .dob(user.getDateOfBirth())
                 .build();
     }
 }

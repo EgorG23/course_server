@@ -11,10 +11,6 @@ public class CreateCollectionRequest {
     @NotBlank
     private String name;
 
-    @Setter
-    @Getter
-    private String description;
-
     @NotEmpty
     private String interests;
 

@@ -34,35 +34,6 @@ public class User implements UserDetails {
         return new UserBuilder();
     }
 
-//    public static class UserBuilder {
-//        private String email;
-//        private String password;
-//        private String userName;
-//
-//        public UserBuilder email(String email) {
-//            this.email = email;
-//            return this;
-//        }
-//
-//        public UserBuilder password(String password) {
-//            this.password = password;
-//            return this;
-//        }
-//
-//        public UserBuilder userName(String userName) {
-//            this.userName = userName;
-//            return this;
-//        }
-//
-////        public User build() {
-////            User user = new User();
-////            user.setEmail(this.email);
-////            user.setPassword(this.password);
-////            user.setUserName(this.userName);
-////            return user;
-////        }
-//    }
-
     public static class UserBuilder {
         private String email;
         private String password;
