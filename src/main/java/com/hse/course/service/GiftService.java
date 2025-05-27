@@ -27,12 +27,14 @@ public class GiftService {
     public List<Gift> getAllGifts(Long userId) {
         List<Gift> allGifts = giftRepository.findAll();
         List<FavoriteGift> favorites = favoriteRepository.findByUserId(userId);
-        Set<Long> favoriteIds = favorites.stream()
-                .map(f -> f.getGift().getId())
-                .collect(Collectors.toSet());
-        allGifts.forEach(gift ->
-                gift.setIsFavorite(favoriteIds.contains(gift.getId()))
-        );
+        if (!favorites.isEmpty()) {
+            Set<Long> favoriteIds = favorites.stream()
+                    .map(f -> f.getGift().getId())
+                    .collect(Collectors.toSet());
+            allGifts.forEach(gift ->
+                    gift.setIsFavorite(favoriteIds.contains(gift.getId()))
+            );
+        }
         return allGifts;
     }
 

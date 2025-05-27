@@ -28,7 +28,6 @@ public class OrderService {
             throw new RuntimeException("Gift is not found");
         }
         Order order = new Order();
-        order.setGlobalId(request.getGlobalId());
         order.setUserId(request.getUserId());
         order.setIdAdvertisement(request.getIdAdvertisement());
         order.setAmount(request.getAmount());

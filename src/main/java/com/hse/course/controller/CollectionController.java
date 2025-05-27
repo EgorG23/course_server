@@ -62,12 +62,10 @@ public class CollectionController {
     @GetMapping("/get/advertisement/{selectionId}")
     public ResponseEntity<ApiResponse> getAdvertisements(@PathVariable Long selectionId) {
         return ResponseEntity.ok(new ApiResponse(
-                gson.toJson(collectionService.getGiftsBySelectionId(selectionId)),
-                true
-        ));
+                gson.toJson(collectionService.getGiftsBySelectionId(selectionId)), true));
     }
 
-//    @PutMapping("/{id}") не будем реализовывать
+//    @PutMapping("/{id}") не будем реализовывать (но работает вне клиента!)
 //    public ResponseEntity<GiftCollection> updateCollection(
 //            @PathVariable Long id,
 //            @RequestBody UpdateCollectionRequest request,

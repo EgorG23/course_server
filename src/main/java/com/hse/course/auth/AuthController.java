@@ -2,7 +2,6 @@ package com.hse.course.auth;
 
 import com.hse.course.config.JwtService;
 import com.hse.course.dto.AuthRequest;
-import com.hse.course.dto.AuthResponse;
 import com.hse.course.dto.RegisterRequest;
 import com.hse.course.repository.UserRepository;
 import com.hse.course.service.ApiResponse;

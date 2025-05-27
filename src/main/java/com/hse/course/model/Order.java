@@ -1,8 +1,6 @@
 package com.hse.course.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -10,6 +8,7 @@ import lombok.Data;
 @Table(name = "orders")
 public class Order {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long globalId;
     private Long userId;
     private Long idAdvertisement;
