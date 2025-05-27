@@ -27,7 +27,7 @@ public class GiftCollection {
     @JoinColumn(name = "user_id")
     private User owner;
 
-    private List<Long> gifts;
+    private List<Long> advertisements;
 
     @PrePersist
     public void generateGlobalId() {

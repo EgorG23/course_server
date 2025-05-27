@@ -33,11 +33,11 @@ public class JwtService {
         this.secretKey = secretKey;
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;
-        log.info("JWT Service initialized");
+        log.info("JWT Service is initialized");
         log.info("Secret key length: {}", secretKey.length());
         try {
             byte[] decoded = Decoders.BASE64.decode(secretKey);
-            log.info("Base64 decode successful. Key length: {}", decoded.length);
+            log.info("Base64 decode was successful. Key length: {}", decoded.length);
         } catch (Exception e) {
             log.error("Failed to decode secret key", e);
         }
@@ -63,8 +63,8 @@ public class JwtService {
     ) {
         try {
             if (userDetails == null || userDetails.getUsername() == null) {
-                log.error("UserDetails или username равен null");
-                throw new IllegalArgumentException("UserDetails или username равен null");
+                log.error("UserDetails or username equals null");
+                throw new IllegalArgumentException("UserDetails or username equals null");
             }
 
             log.info("Building token for user: {}", userDetails.getUsername());
@@ -72,7 +72,7 @@ public class JwtService {
             log.debug("Token expiration: {} ms", expiration);
 
             Key signingKey = getSignInKey();
-            log.debug("Signing key generated");
+            log.debug("Signing key was generated");
 
             return Jwts.builder()
                     .setClaims(extraClaims)
@@ -83,7 +83,7 @@ public class JwtService {
                     .compact();
 
         } catch (Exception e) {
-            log.error("Ошибка при построении токена", e);
+            log.error("Token building error", e);
             throw e;
         }
     }
@@ -135,7 +135,7 @@ public class JwtService {
     private Key getSignInKey() {
         log.debug("Decoding secret key...");
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        log.debug("Secret key decoded successfully. Length: {}", keyBytes.length);
+        log.debug("Secret key was decoded successfully. Length: {}", keyBytes.length);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

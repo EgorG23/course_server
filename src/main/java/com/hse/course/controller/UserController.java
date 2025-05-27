@@ -4,6 +4,7 @@ import com.hse.course.dto.RegisterRequest;
 import com.hse.course.model.User;
 import com.hse.course.service.ApiResponse;
 import com.hse.course.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,4 +47,11 @@ public class UserController {
     public ApiResponse getLoyaltyCard(@PathVariable String userGlobalId) {
         return userService.getLoyaltyCard(userGlobalId);
     }
+
+    @GetMapping("/user/get/photo/{path}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable("path") String path){
+        return userService.getPhoto(path);
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.hse.course.controller;
 
+import com.google.gson.Gson;
 import com.hse.course.dto.OrderRequest;
 import com.hse.course.dto.OrderResponse;
 import com.hse.course.model.Order;
@@ -18,23 +19,23 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
-
+    private final Gson gson = new Gson();
     @PostMapping("/placing")
     public ResponseEntity<ApiResponse> placeOrder(@RequestBody OrderRequest request) {
         try {
             OrderResponse response = orderService.placeOrder(request);
-            return ResponseEntity.ok(new ApiResponse(response, true));
+            return ResponseEntity.ok(new ApiResponse(gson.toJson(response), true));
         } catch (Exception e) {
-            return ResponseEntity.ok(new ApiResponse("Ошибка при создании заказа", false));
+            return ResponseEntity.ok(new ApiResponse("Creating order error", false));
         }
     }
 
     @GetMapping("/list/get/{userGlobalId}")
-    public ResponseEntity<List<OrderResponse>> getUserOrders(@PathVariable String userGlobalId) {
+    public ResponseEntity<ApiResponse> getUserOrders(@PathVariable String userGlobalId) {
         try {
             Long userId = Long.valueOf(userGlobalId);
             List<OrderResponse> orders = orderService.getUserOrders(userId);
-            return ResponseEntity.ok(orders);
+            return ResponseEntity.ok(new ApiResponse(gson.toJson(orders), true));
         } catch (NumberFormatException e) {
             throw new RuntimeException("Invalid user ID format");
         }

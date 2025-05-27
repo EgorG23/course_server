@@ -32,12 +32,17 @@ public class OrderService {
         order.setUserId(request.getUserId());
         order.setIdAdvertisement(request.getIdAdvertisement());
         order.setAmount(request.getAmount());
+        order.setAddress(request.getAddress());
+        order.setByCash(request.getIsByCash());
+
         orderRepository.save(order);
         return OrderResponse.builder()
                 .globalId(order.getGlobalId())
                 .userId(order.getUserId())
                 .idAdvertisement(order.getIdAdvertisement())
                 .amount(order.getAmount())
+                .address(order.getAddress())
+                .isByCash(order.getByCash())
                 .build();
     }
 
@@ -49,6 +54,8 @@ public class OrderService {
                         .userId(order.getUserId())
                         .idAdvertisement(order.getIdAdvertisement())
                         .amount(order.getAmount())
+                        .address(order.getAddress())
+                        .isByCash(order.getByCash())
                         .build())
                 .toList();
     }

@@ -1,5 +1,6 @@
 package com.hse.course.service;
 
+import com.google.gson.Gson;
 import com.hse.course.dto.RegisterRequest;
 import com.hse.course.dto.UserResponse;
 import com.hse.course.model.LoyaltyCard;
@@ -13,6 +14,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.gson.Gson;
+import com.hse.course.dto.RegisterRequest;
+import com.hse.course.dto.UserResponse;
+import com.hse.course.model.LoyaltyCard;
+import com.hse.course.model.User;
+import com.hse.course.repository.LoyaltyCardRepository;
+import com.hse.course.repository.UserRepository;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +45,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final LoyaltyCardRepository loyaltyCardRepository;
+    private final Gson gson=new Gson();
 
     public UserService(UserRepository userRepository, LoyaltyCardRepository loyaltyCardRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -40,7 +61,7 @@ public class UserService {
         User user = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .userName(request.getUserName())
+                .name(request.getName())
                 .surname(request.getSurname())
                 .phoneNumber(request.getPhoneNumber())
                 .dateOfBirth(request.getDob())
@@ -69,7 +90,7 @@ public class UserService {
                     .globalId(user.getId())
                     .email(user.getEmail())
                     .password(user.getPassword())
-                    .name(user.getUserName())
+                    .name(user.getName())
                     .surname(user.getSurname())
                     .phoneNumber(user.getPhoneNumber())
                     .dob(user.getDateOfBirth())
@@ -152,11 +173,30 @@ public class UserService {
         try {
             Long userId = Long.valueOf(userGlobalId);
             LoyaltyCard card = loyaltyCardRepository.findByUserId(userId)
-                    .orElseThrow(() -> new RuntimeException("Loyalty card not found"));
+                    .orElseThrow(() -> new RuntimeException("Loyalty card is not found"));
 
             return new ApiResponse(card, true);
         } catch (NumberFormatException e) {
             return new ApiResponse("Invalid user ID format", false);
         }
+    }
+
+    public ResponseEntity<byte[]> getPhoto(String path) { //Не забудь поменять путь!
+        try {
+            File photo = new File("\"C:\\Users\\huawei\\Desktop\"" + path);
+            if (!photo.exists()) {
+                photo = new File("04.png");
+                System.out.println("def");
+            }
+
+            byte[] imageBytes = Files.readAllBytes(Path.of(photo.getAbsolutePath()));
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

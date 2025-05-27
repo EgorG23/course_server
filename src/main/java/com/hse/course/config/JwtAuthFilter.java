@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationContext;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final ApplicationContext context; // вместо UserDetailsService
+    private final ApplicationContext context;
 
     public JwtAuthFilter(JwtService jwtService, ApplicationContext context) {
         this.jwtService = jwtService;

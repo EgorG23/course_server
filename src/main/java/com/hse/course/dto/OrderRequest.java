@@ -8,4 +8,6 @@ public class OrderRequest {
     private Long userId;
     private Long idAdvertisement;
     private Integer amount;
+    private String address;
+    private Boolean isByCash;
 }

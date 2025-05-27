@@ -18,7 +18,7 @@ public class RegisterRequest {
     private String password;
 
     @NotBlank(message = "Имя пользователя обязательно")
-    private String userName;
+    private String name;
 
     private String surname;
 

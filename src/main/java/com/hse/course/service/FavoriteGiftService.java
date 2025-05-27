@@ -1,5 +1,6 @@
 package com.hse.course.service;
 
+import com.google.gson.Gson;
 import com.hse.course.model.*;
 import com.hse.course.repository.FavoriteRepository;
 import com.hse.course.repository.GiftRepository;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,24 +19,7 @@ public class FavoriteGiftService {
     private final FavoriteRepository favoriteRepository;
     private final UserRepository userRepository;
     private final GiftRepository giftRepository;
-
-    @Transactional
-    public ApiResponse addToFavorites(Long userId, Long giftId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User is not found"));
-
-        if (favoriteRepository.existsByUserAndGiftId(user, giftId)) {
-            return new ApiResponse("Gift is already in favorites", false);
-        }
-
-        FavoriteGift favorite = new FavoriteGift();
-        favorite.setUser(user);
-        favorite.setGift(giftRepository.findById(giftId)
-                .orElseThrow(() -> new RuntimeException("Gift is not found")));
-
-        favoriteRepository.save(favorite);
-        return new ApiResponse("Added to favorites", true);
-    }
+    private final Gson gson=new Gson();
 
     @Transactional
     public ApiResponse removeFromFavorites(Long userId, Long productId) {
@@ -43,16 +28,6 @@ public class FavoriteGiftService {
 
         favoriteRepository.deleteByUserAndGiftId(user, productId);
         return new ApiResponse("Removed from favorites", true);
-    }
-
-    public ApiResponse getUserFavorites(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User is not found"));
-        List<FavoriteGift> favorites = favoriteRepository.findByUser(user);
-        List<Gift> gifts = favorites.stream()
-                .map(FavoriteGift::getGift)
-                .toList();
-        return new ApiResponse(gifts, true);
     }
 
     @Transactional
@@ -73,13 +48,13 @@ public class FavoriteGiftService {
     }
 
     public ApiResponse getFavorites(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User isnot found"));
-
-        List<Gift> favorites = favoriteRepository.findByUser(user).stream()
-                .map(FavoriteGift::getGift)
-                .collect(Collectors.toList());
-
-        return new ApiResponse(favorites, true);
+        List<FavoriteGift> favorites = favoriteRepository.findByUserId(userId);
+        List<Gift> response = new ArrayList<>();
+        for(FavoriteGift fg: favorites){
+            Gift g = fg.getGift();
+            g.setIsFavorite(true);
+            response.add(g);
+        }
+        return new ApiResponse(gson.toJson(response), true);
     }
 }

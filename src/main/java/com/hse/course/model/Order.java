@@ -14,9 +14,8 @@ public class Order {
     private Long userId;
     private Long idAdvertisement;
     private Integer amount;
-
-
-
+    private String address;
+    private Boolean isByCash;
 
 
     public Long getGlobalId() {
@@ -49,5 +48,21 @@ public class Order {
 
     public void setAmount(Integer amount) {
         this.amount = amount;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Boolean getByCash() {
+        return isByCash;
+    }
+
+    public void setByCash(Boolean byCash) {
+        isByCash = byCash;
     }
 }
